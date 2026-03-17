@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    --background: 40 33% 96%;
+    --foreground: 25 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 25 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 30% 12%;
+
+    --primary: 130 45% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 40% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 40 20% 90%;
+    --muted-foreground: 25 15% 45%;
+
+    --accent: 45 80% 55%;
+    --accent-foreground: 25 30% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 20% 82%;
+    --input: 30 20% 82%;
+    --ring: 130 45% 38%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 130 45% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 20% 90%;
+    --sidebar-accent-foreground: 25 30% 12%;
+    --sidebar-border: 30 20% 82%;
+    --sidebar-ring: 130 45% 38%;
+
+    /* Custom tokens */
+    --earth-brown: 25 35% 30%;
+    --earth-brown-light: 30 25% 65%;
+    --leaf-green: 130 50% 45%;
+    --leaf-green-light: 130 40% 85%;
+    --sky-blue: 200 60% 50%;
+    --sky-blue-light: 200 50% 90%;
+    --sun-yellow: 45 90% 55%;
+    --sun-yellow-light: 45 70% 88%;
+    --soil-dark: 20 30% 18%;
+    --gradient-hero: linear-gradient(135deg, hsl(130 50% 40%), hsl(130 45% 30%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(40 30% 97%));
+    --shadow-card: 0 4px 20px -4px hsl(25 30% 12% / 0.08);
+    --shadow-button: 0 4px 14px -2px hsl(130 45% 38% / 0.35);
+  }
+
+  .dark {
+    --background: 20 30% 8%;
+    --foreground: 40 20% 92%;
+    --card: 20 25% 12%;
+    --card-foreground: 40 20% 92%;
+    --popover: 20 25% 12%;
+    --popover-foreground: 40 20% 92%;
+    --primary: 130 45% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 35% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 20% 18%;
+    --muted-foreground: 40 15% 60%;
+    --accent: 45 70% 50%;
+    --accent-foreground: 25 30% 12%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 20% 22%;
+    --input: 20 20% 22%;
+    --ring: 130 45% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Noto Sans Devanagari', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .action-card {
+    @apply bg-card rounded-2xl p-5 shadow-[var(--shadow-card)] border border-border/50 
+           active:scale-[0.97] transition-transform duration-150 cursor-pointer;
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  .scan-animation {
+    animation: scan-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scan-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 hsl(130 50% 45% / 0.4);
+    }
+    50% { 
+      box-shadow: 0 0 0 20px hsl(130 50% 45% / 0);
+    }
+  }
+
+  @keyframes scan-line {
+    0% { top: 0%; }
+    50% { top: 90%; }
+    100% { top: 0%; }
+  }
+
+  .scan-line-animation {
+    animation: scan-line 2s ease-in-out infinite;
+  }
+
+  .float-bounce {
+    animation: float-bounce 3s ease-in-out infinite;
+  }
+
+  @keyframes float-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes slide-in-right {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(0); }
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out;
+  }
+}
