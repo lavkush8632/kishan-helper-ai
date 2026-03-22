@@ -31,6 +31,7 @@ const App = () => (
           <Route path="/crop-doctor" element={<CropDoctor />} />
           <Route path="/assistant" element={<AIAssistant />} />
           <Route path="/about" element={<AboutDeveloper />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
