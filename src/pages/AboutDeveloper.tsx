@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, GraduationCap, Heart, Code, Rocket, MapPin, Edit3 } from "lucide-react";
+import { ArrowLeft, User, Heart, Code, Rocket, Edit3, Check, X } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface ProfileData {
   name: string;
   age: number | string;
   college: string;
   profession: string;
+}
+
+interface AboutData {
+  interests: string;
+  journey: string;
+  aboutProject: string;
 }
 
 const DEFAULT_PROFILE: ProfileData = {
@@ -16,16 +23,113 @@ const DEFAULT_PROFILE: ProfileData = {
   profession: "--",
 };
 
+const DEFAULT_ABOUT: AboutData = {
+  interests: "Coding, Farming, Business",
+  journey: "Share your coding journey or experience here...",
+  aboutProject: "Describe your app or project here...",
+};
+
+type EditingSection = "interests" | "journey" | "aboutProject" | null;
+
 const AboutDeveloper = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData>(DEFAULT_PROFILE);
+  const [about, setAbout] = useState<AboutData>(DEFAULT_ABOUT);
+  const [editing, setEditing] = useState<EditingSection>(null);
+  const [editValue, setEditValue] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("userProfile");
-    if (saved) {
-      setProfile(JSON.parse(saved));
-    }
+    const savedProfile = localStorage.getItem("userProfile");
+    if (savedProfile) setProfile(JSON.parse(savedProfile));
+
+    const savedAbout = localStorage.getItem("userAbout");
+    if (savedAbout) setAbout(JSON.parse(savedAbout));
   }, []);
+
+  const startEdit = (section: EditingSection) => {
+    if (!section) return;
+    setEditing(section);
+    setEditValue(about[section]);
+  };
+
+  const saveEdit = () => {
+    if (!editing) return;
+    if (!editValue.trim()) {
+      toast({ title: "Field cannot be empty", variant: "destructive" });
+      return;
+    }
+    const updated = { ...about, [editing]: editValue.trim() };
+    setAbout(updated);
+    localStorage.setItem("userAbout", JSON.stringify(updated));
+    setEditing(null);
+    toast({ title: "Updated successfully ✅" });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setEditValue("");
+  };
+
+  const renderSection = (
+    key: "interests" | "journey" | "aboutProject",
+    title: string,
+    icon: React.ReactNode,
+    iconBg: string,
+    delay: string
+  ) => {
+    const isEditing = editing === key;
+    return (
+      <div
+        className="bg-card rounded-2xl p-5 shadow-[var(--shadow-card)] border border-border/50 animate-slide-up"
+        style={{ animationDelay: delay }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-bold text-foreground text-lg flex items-center gap-2">
+            <div className={`w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center`}>
+              {icon}
+            </div>
+            {title}
+          </h2>
+          {!isEditing ? (
+            <button
+              onClick={() => startEdit(key)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold active:scale-95 transition-transform"
+            >
+              <Edit3 className="w-3 h-3" />
+              Edit
+            </button>
+          ) : (
+            <div className="flex gap-1.5">
+              <button
+                onClick={saveEdit}
+                className="w-7 h-7 rounded-full bg-primary flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <Check className="w-3.5 h-3.5 text-primary-foreground" />
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="w-7 h-7 rounded-full bg-destructive flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <X className="w-3.5 h-3.5 text-destructive-foreground" />
+              </button>
+            </div>
+          )}
+        </div>
+        {isEditing ? (
+          <textarea
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className="w-full min-h-[100px] rounded-xl bg-muted border border-border p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            autoFocus
+          />
+        ) : (
+          <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+            {about[key]}
+          </p>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background pb-8">
@@ -56,7 +160,7 @@ const AboutDeveloper = () => {
       </div>
 
       <div className="px-5 -mt-5 space-y-4">
-        {/* Section 1: My Information */}
+        {/* My Information */}
         <div className="bg-card rounded-2xl p-5 shadow-[var(--shadow-card)] border border-border/50 animate-slide-up">
           <h2 className="font-bold text-foreground text-lg flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-leaf-light flex items-center justify-center">
@@ -79,56 +183,9 @@ const AboutDeveloper = () => {
           </div>
         </div>
 
-        {/* Section 2: Interests */}
-        <div className="bg-card rounded-2xl p-5 shadow-[var(--shadow-card)] border border-border/50 animate-slide-up" style={{ animationDelay: "100ms" }}>
-          <h2 className="font-bold text-foreground text-lg flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-sun-light flex items-center justify-center">
-              <Heart className="w-4 h-4 text-secondary" />
-            </div>
-            रुचियाँ
-          </h2>
-          <p className="text-sm text-foreground leading-relaxed">
-            मुझे बचपन से ही तकनीक में रुचि रही है। मुझे तकनीक के डिज़ाइन पक्ष में आनंद मिलता है। 
-            User experiences तैयार करना और डिजिटल इंटरफेस की सुंदरता को explore करना — यह मेरा passion है। 
-            मेरी रुचियों में <span className="font-bold text-primary">coding</span>, <span className="font-bold text-primary">technology सीखना</span>, 
-            और <span className="font-bold text-primary">3D printing</span> शामिल हैं। 
-            मेरा सपना है कि मैं अपने परिवार के साथ दुनिया घूमूँ। ✈️🌍
-          </p>
-        </div>
-
-        {/* Section 3: Journey to Coding */}
-        <div className="bg-card rounded-2xl p-5 shadow-[var(--shadow-card)] border border-border/50 animate-slide-up" style={{ animationDelay: "200ms" }}>
-          <h2 className="font-bold text-foreground text-lg flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-sky-light flex items-center justify-center">
-              <Code className="w-4 h-4 text-sky" />
-            </div>
-            कोडिंग की यात्रा
-          </h2>
-          <p className="text-sm text-foreground leading-relaxed">
-            CodeYogi की बदौलत, मैं coding में आत्मविश्वास हासिल कर रही हूँ और तकनीक में अपने भविष्य के लिए 
-            एक मजबूत नींव बना रही हूँ। 💪🎯
-          </p>
-        </div>
-
-        {/* Section 4: Project Overview */}
-        <div className="bg-card rounded-2xl p-5 shadow-[var(--shadow-card)] border border-border/50 animate-slide-up" style={{ animationDelay: "300ms" }}>
-          <h2 className="font-bold text-foreground text-lg flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-leaf-light flex items-center justify-center">
-              <Rocket className="w-4 h-4 text-primary" />
-            </div>
-            प्रोजेक्ट के बारे में
-          </h2>
-          <p className="text-sm text-foreground leading-relaxed">
-            यह प्रोजेक्ट '<span className="font-bold text-primary">Kisan Helper AI</span>' वेबसाइट का एक प्रोटोटाइप है, 
-            जो खेती सीखने और प्रदर्शन के उद्देश्य से बनाया गया है। किसान कृषि से संबंधित उपयोगी जानकारी आसानी से प्राप्त कर सकते हैं, 
-            फसलों, मौसम, खेती की तकनीकों और सामान्य समस्याओं के बारे में सवाल पूछ सकते हैं और सरल मार्गदर्शन प्राप्त कर सकते हैं। 
-            मुख्य लक्ष्य किसानों को सही समय पर सही जानकारी से सहायता करना है। 🌾👨‍🌾
-          </p>
-          <div className="mt-3 p-3 rounded-xl bg-muted">
-            <p className="text-xs text-muted-foreground">तकनीक</p>
-            <p className="text-sm font-semibold text-foreground mt-0.5">React, TypeScript, Tailwind CSS</p>
-          </div>
-        </div>
+        {renderSection("interests", "रुचियाँ (Interests)", <Heart className="w-4 h-4 text-secondary" />, "bg-sun-light", "100ms")}
+        {renderSection("journey", "कोडिंग की यात्रा (Coding Journey)", <Code className="w-4 h-4 text-sky" />, "bg-sky-light", "200ms")}
+        {renderSection("aboutProject", "प्रोजेक्ट के बारे में (About Project)", <Rocket className="w-4 h-4 text-primary" />, "bg-leaf-light", "300ms")}
       </div>
     </div>
   );
