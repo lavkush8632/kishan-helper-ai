@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Heart, Code, Rocket, Edit3, Check, X } from "lucide-react";
+import { ArrowLeft, User, Heart, Code, Rocket, Edit3, Check, X, Camera } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ProfileData {
