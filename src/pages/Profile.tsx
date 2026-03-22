@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Edit3, Save, GraduationCap, Briefcase, Calendar } from "lucide-react";
+import { ArrowLeft, User, Edit3, Save, GraduationCap, Briefcase, Calendar, Camera } from "lucide-react";
 import { toast } from "sonner";
 
 interface ProfileData {
@@ -23,6 +23,8 @@ const Profile = () => {
   const [profile, setProfile] = useState<ProfileData>(DEFAULT_PROFILE);
   const [editData, setEditData] = useState<ProfileData>(DEFAULT_PROFILE);
   const [errors, setErrors] = useState<Partial<Record<keyof ProfileData, string>>>({});
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("userProfile");
@@ -31,7 +33,30 @@ const Profile = () => {
       setProfile(parsed);
       setEditData(parsed);
     }
+    const savedImage = localStorage.getItem("userProfileImage");
+    if (savedImage) setProfileImage(savedImage);
   }, []);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target?.result as string;
+      setProfileImage(base64);
+      localStorage.setItem("userProfileImage", base64);
+      toast.success("Profile photo updated ✅");
+    };
+    reader.readAsDataURL(file);
+  };
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof ProfileData, string>> = {};
@@ -97,8 +122,27 @@ const Profile = () => {
 
         {/* Avatar */}
         <div className="flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-primary-foreground/20 border-3 border-primary-foreground/40 flex items-center justify-center shadow-lg">
-            <User className="w-10 h-10 text-primary-foreground" />
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full bg-primary-foreground/20 border-3 border-primary-foreground/40 flex items-center justify-center shadow-lg overflow-hidden">
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-10 h-10 text-primary-foreground" />
+              )}
+            </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary border-2 border-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform"
+            >
+              <Camera className="w-4 h-4 text-primary-foreground" />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
           </div>
           <p className="mt-3 text-lg font-bold text-primary-foreground">{profile.name}</p>
           <p className="text-sm text-primary-foreground/70">{profile.profession}</p>

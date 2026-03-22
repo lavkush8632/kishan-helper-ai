@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Heart, Code, Rocket, Edit3, Check, X } from "lucide-react";
+import { ArrowLeft, User, Heart, Code, Rocket, Edit3, Check, X, Camera } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ProfileData {
@@ -37,6 +37,7 @@ const AboutDeveloper = () => {
   const [about, setAbout] = useState<AboutData>(DEFAULT_ABOUT);
   const [editing, setEditing] = useState<EditingSection>(null);
   const [editValue, setEditValue] = useState("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     const savedProfile = localStorage.getItem("userProfile");
@@ -44,6 +45,9 @@ const AboutDeveloper = () => {
 
     const savedAbout = localStorage.getItem("userAbout");
     if (savedAbout) setAbout(JSON.parse(savedAbout));
+
+    const savedImage = localStorage.getItem("userProfileImage");
+    if (savedImage) setProfileImage(savedImage);
   }, []);
 
   const startEdit = (section: EditingSection) => {
@@ -151,10 +155,19 @@ const AboutDeveloper = () => {
           </button>
         </div>
         <div className="text-center">
-          <div className="w-24 h-24 rounded-full bg-primary-foreground/20 border-4 border-primary-foreground/40 flex items-center justify-center mx-auto mb-3">
-            <User className="w-12 h-12 text-primary-foreground" />
+          <div className="relative inline-block">
+            <div className="w-24 h-24 rounded-full bg-primary-foreground/20 border-4 border-primary-foreground/40 flex items-center justify-center overflow-hidden">
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-12 h-12 text-primary-foreground" />
+              )}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary border-2 border-primary-foreground flex items-center justify-center">
+              <Camera className="w-4 h-4 text-primary-foreground" />
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-primary-foreground">{profile.name}</h1>
+          <h1 className="text-2xl font-bold text-primary-foreground mt-3">{profile.name}</h1>
           <p className="text-primary-foreground/80 mt-1">{profile.profession}</p>
         </div>
       </div>
