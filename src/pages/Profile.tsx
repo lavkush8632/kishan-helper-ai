@@ -23,6 +23,8 @@ const Profile = () => {
   const [profile, setProfile] = useState<ProfileData>(DEFAULT_PROFILE);
   const [editData, setEditData] = useState<ProfileData>(DEFAULT_PROFILE);
   const [errors, setErrors] = useState<Partial<Record<keyof ProfileData, string>>>({});
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("userProfile");
@@ -31,7 +33,30 @@ const Profile = () => {
       setProfile(parsed);
       setEditData(parsed);
     }
+    const savedImage = localStorage.getItem("userProfileImage");
+    if (savedImage) setProfileImage(savedImage);
   }, []);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target?.result as string;
+      setProfileImage(base64);
+      localStorage.setItem("userProfileImage", base64);
+      toast.success("Profile photo updated ✅");
+    };
+    reader.readAsDataURL(file);
+  };
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof ProfileData, string>> = {};
