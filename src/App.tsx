@@ -11,6 +11,7 @@ import CropManagement from "./pages/CropManagement";
 import CropDoctor from "./pages/CropDoctor";
 import AIAssistant from "./pages/AIAssistant";
 import AboutDeveloper from "./pages/AboutDeveloper";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
