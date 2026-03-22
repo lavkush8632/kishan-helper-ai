@@ -37,6 +37,7 @@ const AboutDeveloper = () => {
   const [about, setAbout] = useState<AboutData>(DEFAULT_ABOUT);
   const [editing, setEditing] = useState<EditingSection>(null);
   const [editValue, setEditValue] = useState("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     const savedProfile = localStorage.getItem("userProfile");
@@ -44,6 +45,9 @@ const AboutDeveloper = () => {
 
     const savedAbout = localStorage.getItem("userAbout");
     if (savedAbout) setAbout(JSON.parse(savedAbout));
+
+    const savedImage = localStorage.getItem("userProfileImage");
+    if (savedImage) setProfileImage(savedImage);
   }, []);
 
   const startEdit = (section: EditingSection) => {
