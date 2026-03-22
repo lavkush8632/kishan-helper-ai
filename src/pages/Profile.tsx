@@ -122,8 +122,27 @@ const Profile = () => {
 
         {/* Avatar */}
         <div className="flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-primary-foreground/20 border-3 border-primary-foreground/40 flex items-center justify-center shadow-lg">
-            <User className="w-10 h-10 text-primary-foreground" />
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full bg-primary-foreground/20 border-3 border-primary-foreground/40 flex items-center justify-center shadow-lg overflow-hidden">
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-10 h-10 text-primary-foreground" />
+              )}
+            </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary border-2 border-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform"
+            >
+              <Camera className="w-4 h-4 text-primary-foreground" />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
           </div>
           <p className="mt-3 text-lg font-bold text-primary-foreground">{profile.name}</p>
           <p className="text-sm text-primary-foreground/70">{profile.profession}</p>
