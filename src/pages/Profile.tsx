@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Edit3, Save, GraduationCap, Briefcase, Calendar } from "lucide-react";
+import { ArrowLeft, User, Edit3, Save, GraduationCap, Briefcase, Calendar, Camera } from "lucide-react";
 import { toast } from "sonner";
 
 interface ProfileData {
