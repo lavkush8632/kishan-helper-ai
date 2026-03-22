@@ -1,25 +1,57 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, GraduationCap, Heart, Code, Rocket, MapPin } from "lucide-react";
+import { ArrowLeft, User, GraduationCap, Heart, Code, Rocket, MapPin, Edit3 } from "lucide-react";
+
+interface ProfileData {
+  name: string;
+  age: number | string;
+  college: string;
+  profession: string;
+}
+
+const DEFAULT_PROFILE: ProfileData = {
+  name: "Enter your name",
+  age: "--",
+  college: "--",
+  profession: "--",
+};
 
 const AboutDeveloper = () => {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<ProfileData>(DEFAULT_PROFILE);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("userProfile");
+    if (saved) {
+      setProfile(JSON.parse(saved));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-8">
       {/* Header */}
       <div className="hero-gradient px-5 pt-6 pb-10 rounded-b-3xl">
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center mb-4"
-        >
-          <ArrowLeft className="w-5 h-5 text-primary-foreground" />
-        </button>
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center"
+          >
+            <ArrowLeft className="w-5 h-5 text-primary-foreground" />
+          </button>
+          <button
+            onClick={() => navigate("/profile")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-foreground/20 text-primary-foreground text-sm font-semibold active:scale-95 transition-transform"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            Edit Profile
+          </button>
+        </div>
         <div className="text-center">
           <div className="w-24 h-24 rounded-full bg-primary-foreground/20 border-4 border-primary-foreground/40 flex items-center justify-center mx-auto mb-3">
             <User className="w-12 h-12 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-primary-foreground">Ritika Prajapati</h1>
-          <p className="text-primary-foreground/80 mt-1">BCA Student & Web Developer</p>
+          <h1 className="text-2xl font-bold text-primary-foreground">{profile.name}</h1>
+          <p className="text-primary-foreground/80 mt-1">{profile.profession}</p>
         </div>
       </div>
 
@@ -34,27 +66,16 @@ const AboutDeveloper = () => {
           </h2>
           <div className="space-y-3">
             {[
-              { label: "नाम", value: "Ritika Prajapati" },
-              { label: "उम्र", value: "19 वर्ष" },
-              { label: "कॉलेज", value: "Maa Jinvani College of Legal Studies Pushpgiri Teerth, Sonkatch" },
-              { label: "पिताजी का नाम", value: "Mr. Jitendra Prajapati" },
-              { label: "माताजी का नाम", value: "Mrs. Sangeeta Prajapati" },
-              { label: "शिक्षा", value: "BCA (Bachelor of Computer Application) में पढ़ाई के साथ-साथ Web Development सीख रही हूँ ताकि मजबूत तकनीकी कौशल बना सकूँ।" },
+              { label: "Name", value: profile.name },
+              { label: "Age", value: profile.age === "--" ? "--" : `${profile.age} वर्ष` },
+              { label: "College", value: profile.college },
+              { label: "Pesha (Profession)", value: profile.profession },
             ].map((item) => (
               <div key={item.label} className="p-3 rounded-xl bg-muted">
                 <p className="text-xs text-muted-foreground">{item.label}</p>
                 <p className="text-sm font-semibold text-foreground mt-0.5">{item.value}</p>
               </div>
             ))}
-            <div className="p-3 rounded-xl bg-leaf-light flex items-start gap-2">
-              <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-xs text-muted-foreground">वर्तमान स्थान</p>
-                <p className="text-sm font-semibold text-foreground mt-0.5">
-                  गाँव: Jawar, जिला: Sehore, राज्य: Madhya Pradesh
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -84,8 +105,6 @@ const AboutDeveloper = () => {
             कोडिंग की यात्रा
           </h2>
           <p className="text-sm text-foreground leading-relaxed">
-            मुझे <span className="font-bold text-primary">CodeYogi</span> के बारे में अपने कॉलेज, 
-            <span className="font-semibold"> Maa Jinvani College of Legal Studies Pushpgiri Teerth, Sonkatch</span> से पता चला। 
             CodeYogi की बदौलत, मैं coding में आत्मविश्वास हासिल कर रही हूँ और तकनीक में अपने भविष्य के लिए 
             एक मजबूत नींव बना रही हूँ। 💪🎯
           </p>
